@@ -21,37 +21,35 @@ void    put_line(char *data_addr, char *sprite_data);
 
 void    put_sprite(t_game *game, int pos_x, int pos_y, int version)
 {
-    int x, y;
-    for (y = 0; y < SPRITE_HEIGHT; y++)
+    int y = 0;
+    while (y < SPRITE_HEIGHT)
     {
-        for (x = 0; x < SPRITE_WIDTH; x++)
-        {
-            int index = (y + pos_y) * game->line_size + (x + pos_x);
-            put_line(&game->data_addr[index], &game->colectable[version][y * SPRITE_WIDTH]);
-        }
+        int index = (y + pos_y) * game->line_size + pos_x;
+        put_line(&game->data_addr[index], &game->colectable[version][y * SPRITE_WIDTH]);
+        y++;
     }
 }
 
 void    put_line(char *data_addr, char *sprite_data)
 {
-    for (int i = 0; i < SPRITE_WIDTH; i++)
+    int i = 0;
+    while (i < SPRITE_WIDTH)
     {
-        if (sprite_data[i * 4] != 0)
-            put_pixel(&data_addr[i * 4], &sprite_data[i * 4]);
+        if (sprite_data[i] == 0)
+            put_pixel(&data_addr[i], &sprite_data[i]);
+        i++;
     }
 }
 
 void    put_pixel(char *data_addr, char *color)
 {
-    data_addr[0] = color[0];
-    data_addr[1] = color[1];
-    data_addr[2] = color[2];
-    data_addr[3] = color[3];
+    *data_addr = *color;
 }
 
 int main()
 {
-    int x, y;
+    int x = 0;
+    int y = 0;
     char image[9] = {0};
     char sprite[4] = {1,1,1,1};
     
@@ -73,13 +71,17 @@ int main()
     
     put_sprite(game, 1, 1, 0);
     
-    for (y = 0; y < 3; y++)
+    y = 0;
+    while (y < 3)
     {
-        for (x = 0; x < 3; x++)
+        x = 0;
+        while (x < 3)
         {
             printf("%d ", image[y * 3 + x]);
+            x++;
         }
         printf("\n");
+        y++;
     }
     
     free(game->colectable);
