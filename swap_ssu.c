@@ -1,5 +1,10 @@
-# define SPRITE_WIDTH 50
-# define SPRITE_HIGHT 50
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+# define SPRITE_WIDTH 2 //50
+# define SPRITE_HIGHT 2 //50
 
 typedef struct s_game
 {
@@ -8,32 +13,27 @@ typedef struct s_game
 	void	*img;
 	char	*data_addr;
 	int		line_size;
+	char	**colectable;
 
 }			t_game;
 
-//in work
-void	put_sprite(t_game *game, char *sprite_data, int pos_x, int pos_y)
+void	put_pixel(char *data_addr, char *color);
+void	put_sprite(t_game *game, int pos_x, int pos_y, int version);
+void	put_line(char *data_addr, char *sprite_data);
+
+//should works
+void	put_sprite(t_game *game, int pos_x, int pos_y, int version)
 {
 	int	x;
 	int	y;
 
 	y = 0;
-	while (y < pos_y*SPRITE_HIGHT)
+	while (y < pos_y+SPRITE_HIGHT)
 	{
-		x = 0;
-
-
-	while (j < 50)
-	{
-		while (i < 50)
-		{
-			if (&sprite_data[j * 50 + i] != 0)
-				put_pixel(game->data_addr, &sprite_data[j * 50 + i]);
-			i++;
-		}
-		i = 0;
-		j++;
+		x = y * game->line_size + pos_x;
+		put_line(&game->data_addr[x], &game->colectable[version][y * SPRITE_WIDTH]);
 	}
+
 }
 
 //should works
@@ -57,4 +57,33 @@ void	put_pixel(char *data_addr, char *color)
 	data_addr[1] = color[1];
 	data_addr[2] = color[2];
 	data_addr[3] = color[3];
+}
+
+
+
+int main()
+{
+	int x = 0;
+	int y = 0;
+	int image[9] = {0,0,0,
+					0,0,0,
+					0,0,0};
+
+	int sprite[4] = {1,1,1,1};
+	
+	t_game *game = malloc(sizeof(t_game));
+
+	game->data_addr = (char *)&image;
+	game->colectable[0] = (char *)&sprite;
+	put_sprite(game, 2, 2, 1);
+	while (y < 3)
+		{
+			while(x < 3)
+			{
+				write(1, image, 1);
+				x++;
+			}
+		y++;
+		}
+
 }
